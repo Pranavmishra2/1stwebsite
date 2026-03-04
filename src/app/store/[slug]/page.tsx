@@ -25,6 +25,7 @@ interface RazorpayOptions {
 
 interface RazorpayInstance {
     open: () => void;
+    on: (event: string, handler: (response: any) => void) => void;
 }
 
 interface RazorpayResponse {
@@ -93,54 +94,75 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
                 customerEmail: "",
             });
 
-            // 3. Load Razorpay checkout script
-            const script = document.createElement("script");
-            script.src = "https://checkout.razorpay.com/v1/checkout.js";
-            script.onload = () => {
-                const options: RazorpayOptions = {
-                    key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID!,
-                    amount: data.amount,
-                    currency: data.currency,
-                    name: "Pranav Kashyap",
-                    description: product.name,
-                    order_id: data.orderId,
-                    handler: async (response: RazorpayResponse) => {
-                        // 4. Verify payment on server
-                        const verifyRes = await fetch("/api/razorpay/verify", {
-                            method: "POST",
-                            headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify(response),
-                        });
-                        const verifyData = await verifyRes.json();
+            // 3. Load Razorpay checkout script safely
+            const loadScript = () => new Promise((resolve, reject) => {
+                const existingScript = document.getElementById("razorpay-checkout-js");
+                if (existingScript) return resolve(true);
+                const script = document.createElement("script");
+                script.id = "razorpay-checkout-js";
+                script.src = "https://checkout.razorpay.com/v1/checkout.js";
+                script.onload = () => resolve(true);
+                script.onerror = () => reject(new Error("Failed to load Razorpay SDK. Please check your internet connection or adblocker."));
+                document.body.appendChild(script);
+            });
 
-                        if (verifyData.verified) {
-                            // 5. Update order in Firestore
-                            await updateOrderStatus(firestoreOrderId, "paid", {
-                                razorpayPaymentId: response.razorpay_payment_id,
-                                razorpayOrderId: response.razorpay_order_id,
-                                razorpaySignature: response.razorpay_signature,
-                            });
-                            setPaymentStatus("success");
-                        } else {
-                            await updateOrderStatus(firestoreOrderId, "failed");
-                            setPaymentStatus("failed");
-                        }
+            await loadScript();
+
+            if (!process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID) {
+                alert("Razorpay API Key is missing. Please add NEXT_PUBLIC_RAZORPAY_KEY_ID to your environment.");
+                setBuying(false);
+                return;
+            }
+
+            const options: RazorpayOptions = {
+                key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
+                amount: data.amount,
+                currency: data.currency,
+                name: "Pranav Kashyap",
+                description: product.name,
+                order_id: data.orderId,
+                handler: async (response: RazorpayResponse) => {
+                    // 4. Verify payment on server
+                    const verifyRes = await fetch("/api/razorpay/verify", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(response),
+                    });
+                    const verifyData = await verifyRes.json();
+
+                    if (verifyData.verified) {
+                        // 5. Update order in Firestore
+                        await updateOrderStatus(firestoreOrderId, "paid", {
+                            razorpayPaymentId: response.razorpay_payment_id,
+                            razorpayOrderId: response.razorpay_order_id,
+                            razorpaySignature: response.razorpay_signature,
+                        });
+                        setPaymentStatus("success");
+                    } else {
+                        await updateOrderStatus(firestoreOrderId, "failed");
+                        setPaymentStatus("failed");
+                        alert("Payment verification failed! Please contact support if amount was deducted.");
+                    }
+                    setBuying(false);
+                },
+                prefill: { name: "", email: "" },
+                theme: { color: "#6366f1" },
+                modal: {
+                    ondismiss: () => {
                         setBuying(false);
                     },
-                    prefill: { name: "", email: "" },
-                    theme: { color: "#6366f1" },
-                    modal: {
-                        ondismiss: () => {
-                            setBuying(false);
-                        },
-                    },
-                };
-                const rzp = new window.Razorpay(options);
-                rzp.open();
+                },
             };
-            document.body.appendChild(script);
-        } catch (err) {
+            const rzp = new window.Razorpay(options);
+            rzp.on("payment.failed", function (response: any) {
+                console.error(response.error);
+                setPaymentStatus("failed");
+                setBuying(false);
+            });
+            rzp.open();
+        } catch (err: any) {
             console.error("Payment error:", err);
+            alert(err.message || "Something went wrong. Please try again.");
             setPaymentStatus("failed");
             setBuying(false);
         }
@@ -149,19 +171,45 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
     // Payment success screen
     if (paymentStatus === "success") {
         return (
-            <div className="container-custom" style={{ padding: "100px 0", textAlign: "center" }}>
-                <div style={{ fontSize: "4rem", marginBottom: 24 }}>🎉</div>
-                <h1 style={{ fontSize: "2rem", fontWeight: 800, marginBottom: 12 }}>
+            <div className="container-custom" style={{ padding: "100px 0", textAlign: "center", minHeight: "80vh", display: "flex", flexDirection: "column", justifyContent: "center" }}>
+                <div style={{ fontSize: "5rem", marginBottom: 24, animation: "bounce 2s infinite" }}>🎉</div>
+                <h1 style={{ fontSize: "clamp(2rem, 5vw, 3rem)", fontWeight: 800, marginBottom: 12 }}>
                     Payment <span className="gradient-text">Successful!</span>
                 </h1>
-                <p style={{ color: "#94a3b8", maxWidth: 400, margin: "0 auto 16px", lineHeight: 1.6 }}>
-                    Thank you for purchasing <strong style={{ color: "#f1f5f9" }}>{product.name}</strong>. Your order has been confirmed!
+                <p style={{ color: "#94a3b8", maxWidth: 450, margin: "0 auto 24px", lineHeight: 1.6, fontSize: "1.1rem" }}>
+                    Thank you for purchasing <strong style={{ color: "#f1f5f9" }}>{product.name}</strong>. Your order has been confirmed and the product is ready.
                 </p>
-                <p style={{ color: "#22d3ee", fontSize: "0.9rem", marginBottom: 32 }}>✉️ Check your email for download instructions.</p>
-                <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
-                    <Link href="/store" className="gradient-btn-outline">← Back to Store</Link>
-                    <Link href="/" className="gradient-btn">Go Home</Link>
+                <div style={{ display: "flex", gap: 16, justifyContent: "center", flexWrap: "wrap", marginTop: 24 }}>
+                    {product.downloadUrl ? (
+                        <a
+                            // If base64 or URL, use it directly
+                            href={product.downloadUrl}
+                            download={product.name}
+                            className="gradient-btn"
+                            style={{ padding: "16px 32px", fontSize: "1.2rem", boxShadow: "0 10px 30px -10px rgba(168, 85, 247, 0.5)" }}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            <span style={{ marginRight: 10 }}>📥</span>
+                            Download Product
+                        </a>
+                    ) : (
+                        <div style={{ padding: "16px 32px", borderRadius: 50, background: "rgba(34,211,238,0.1)", color: "#22d3ee", border: "1px solid rgba(34,211,238,0.2)" }}>
+                            ✉️ Check your email for access instructions
+                        </div>
+                    )}
                 </div>
+                <div style={{ marginTop: 48 }}>
+                    <Link href="/store" className="gradient-btn-outline" style={{ border: "none" }}>← Back to Store</Link>
+                </div>
+
+                <style dangerouslySetInnerHTML={{
+                    __html: `
+                    @keyframes bounce {
+                        0%, 100% { transform: translateY(0); }
+                        50% { transform: translateY(-20px); }
+                    }
+                `}} />
             </div>
         );
     }
