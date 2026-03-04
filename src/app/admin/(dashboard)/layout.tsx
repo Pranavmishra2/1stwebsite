@@ -9,6 +9,7 @@ const sidebarLinks = [
     { href: "/admin/analytics", label: "Analytics", icon: "📈" },
     { href: "/admin/blogs", label: "Blog Posts", icon: "📝" },
     { href: "/admin/products", label: "Products", icon: "📦" },
+    { href: "/admin/orders", label: "Orders", icon: "💰" },
     { href: "/admin/categories", label: "Categories", icon: "🗂️" },
     { href: "/admin/newsletter", label: "Newsletter", icon: "📧" },
     { href: "/admin/coupons", label: "Coupons", icon: "🏷️" },
