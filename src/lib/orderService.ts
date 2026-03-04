@@ -1,6 +1,6 @@
 import { db } from "@/lib/firebase";
 import {
-    collection, doc, getDocs, addDoc, updateDoc, query, orderBy, Timestamp, getDoc,
+    collection, doc, getDocs, addDoc, updateDoc, query, orderBy, where, Timestamp, getDoc,
 } from "firebase/firestore";
 
 export interface Order {
@@ -25,6 +25,17 @@ const COLLECTION = "orders";
 
 export async function getOrders(): Promise<Order[]> {
     const q = query(collection(db, COLLECTION), orderBy("createdAt", "desc"));
+    const snapshot = await getDocs(q);
+    return snapshot.docs.map((d) => ({
+        id: d.id,
+        ...d.data(),
+        createdAt: d.data().createdAt?.toDate?.() || new Date(),
+        paidAt: d.data().paidAt?.toDate?.() || null,
+    })) as Order[];
+}
+
+export async function getUserOrders(email: string): Promise<Order[]> {
+    const q = query(collection(db, COLLECTION), where("customerEmail", "==", email), where("status", "==", "paid"), orderBy("createdAt", "desc"));
     const snapshot = await getDocs(q);
     return snapshot.docs.map((d) => ({
         id: d.id,

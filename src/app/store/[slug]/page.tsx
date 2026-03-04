@@ -4,6 +4,7 @@ import { useState, use, useEffect } from "react";
 import { createOrder, updateOrderStatus } from "@/lib/orderService";
 import { getProductBySlug, Product as DbProduct } from "@/lib/productService";
 import RatingSection from "@/components/RatingSection";
+import { useUser } from "@/context/UserContext";
 
 declare global {
     interface Window {
@@ -37,6 +38,7 @@ interface RazorpayResponse {
 
 export default function ProductDetailPage({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = use(params);
+    const { user, loginWithGoogle } = useUser();
     const [product, setProduct] = useState<DbProduct | null>(null);
     const [loading, setLoading] = useState(true);
     const [openFaq, setOpenFaq] = useState<number | null>(null);
@@ -71,6 +73,12 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
     const discount = product.originalPrice ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100) : 0;
 
     const handleBuyNow = async () => {
+        if (!user) {
+            alert("Please sign in to continue with your purchase.");
+            await loginWithGoogle();
+            return;
+        }
+
         console.log("handleBuyNow triggered");
         setBuying(true);
         setPaymentStatus("idle");
@@ -95,8 +103,8 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
                 amount: product.price,
                 currency: "INR",
                 status: "created",
-                customerName: "",
-                customerEmail: "",
+                customerName: user.name || "Customer",
+                customerEmail: user.email,
             });
             console.log("Firestore order created:", firestoreOrderId);
 
@@ -157,7 +165,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
                     }
                     setBuying(false);
                 },
-                prefill: { name: "", email: "" },
+                prefill: { name: user.name || "", email: user.email || "" },
                 theme: { color: "#6366f1" },
                 modal: {
                     ondismiss: () => {

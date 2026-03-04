@@ -153,6 +153,27 @@ export default function Navbar() {
                                         <p style={{ fontWeight: 600, fontSize: "0.85rem", color: "#f1f5f9" }}>{user.name}</p>
                                         <p style={{ fontSize: "0.72rem", color: "#64748b", marginTop: 2 }}>{user.email}</p>
                                     </div>
+                                    <Link
+                                        href="/dashboard"
+                                        style={{
+                                            display: "block",
+                                            width: "100%",
+                                            padding: "10px 14px",
+                                            borderRadius: 8,
+                                            border: "none",
+                                            background: "transparent",
+                                            color: "#e2e8f0",
+                                            fontSize: "0.82rem",
+                                            fontWeight: 500,
+                                            textDecoration: "none",
+                                            transition: "background 0.2s",
+                                        }}
+                                        onMouseEnter={(e) => (e.currentTarget.style.background = "rgba(255,255,255,0.05)")}
+                                        onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
+                                        onClick={() => setProfileOpen(false)}
+                                    >
+                                        🛍️ My Purchases
+                                    </Link>
                                     <button
                                         onClick={logout}
                                         style={{
@@ -260,6 +281,24 @@ export default function Navbar() {
                     <Link href="/store" className="gradient-btn" style={{ textAlign: "center", marginTop: 8 }}>
                         Explore Products
                     </Link>
+
+                    {user && (
+                        <>
+                            <div style={{ height: 1, background: "rgba(255,255,255,0.05)", margin: "8px 0" }} />
+                            <Link
+                                href="/dashboard"
+                                style={{
+                                    textDecoration: "none",
+                                    fontSize: "1rem",
+                                    fontWeight: 500,
+                                    color: pathname === "/dashboard" ? "#a855f7" : "#94a3b8",
+                                    padding: "8px 0",
+                                }}
+                            >
+                                🛍️ My Purchases
+                            </Link>
+                        </>
+                    )}
 
                     {user && (
                         <button
