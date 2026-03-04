@@ -11,6 +11,7 @@ import {
 import { auth, googleProvider } from "@/lib/firebase";
 
 interface User {
+    uid: string;
     name: string;
     email: string;
     avatar: string;
@@ -29,6 +30,7 @@ const UserContext = createContext<UserContextType | null>(null);
 
 function mapFirebaseUser(fbUser: FirebaseUser): User {
     return {
+        uid: fbUser.uid,
         name: fbUser.displayName || "User",
         email: fbUser.email || "",
         avatar: (fbUser.displayName || "U")

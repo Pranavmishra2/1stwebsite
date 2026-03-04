@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useState, use, useEffect } from "react";
 import { createOrder, updateOrderStatus } from "@/lib/orderService";
 import { getProductBySlug, Product as DbProduct } from "@/lib/productService";
+import RatingSection from "@/components/RatingSection";
 
 declare global {
     interface Window {
@@ -360,6 +361,13 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
                     </div>
                 </section>
             )}
+
+            {/* Ratings & Reviews */}
+            <section style={{ padding: "40px 0 80px" }}>
+                <div className="container-custom" style={{ maxWidth: 800 }}>
+                    <RatingSection productId={product.id || ""} />
+                </div>
+            </section>
 
             {/* Bottom CTA */}
             <section style={{ padding: "60px 0 80px", background: "rgba(22, 22, 29, 0.4)" }}>
