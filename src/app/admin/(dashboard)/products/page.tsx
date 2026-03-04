@@ -76,17 +76,20 @@ export default function AdminProductsPage() {
                 description: form.description,
                 category: form.category,
                 price: Number(form.price),
-                originalPrice: form.originalPrice ? Number(form.originalPrice) : undefined,
                 features: form.features.split("\n").filter(Boolean),
                 faqs: [],
                 status: "Active" as const,
                 downloadUrl,
             };
 
+            const finalData = form.originalPrice
+                ? { ...productData, originalPrice: Number(form.originalPrice) }
+                : productData;
+
             if (editingProduct?.id) {
-                await updateProduct(editingProduct.id, productData);
+                await updateProduct(editingProduct.id, finalData);
             } else {
-                await createProduct(productData);
+                await createProduct(finalData);
             }
             await fetchProducts();
             setShowEditor(false);
