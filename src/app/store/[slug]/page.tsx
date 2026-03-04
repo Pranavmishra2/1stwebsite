@@ -70,19 +70,23 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
     const discount = product.originalPrice ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100) : 0;
 
     const handleBuyNow = async () => {
+        console.log("handleBuyNow triggered");
         setBuying(true);
         setPaymentStatus("idle");
         try {
             // 1. Create Razorpay order on server
+            console.log("Fetching /api/razorpay with amount:", product.price);
             const res = await fetch("/api/razorpay", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ amount: product.price, productName: product.name, productId: product.id || "" }),
             });
             const data = await res.json();
+            console.log("Server response:", res.status, data);
             if (!res.ok) throw new Error(data.error);
 
             // 2. Save order in Firestore
+            console.log("Saving order to Firestore...");
             const firestoreOrderId = await createOrder({
                 orderId: data.orderId,
                 productId: product.id || "",
@@ -93,8 +97,10 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
                 customerName: "",
                 customerEmail: "",
             });
+            console.log("Firestore order created:", firestoreOrderId);
 
             // 3. Load Razorpay checkout script safely
+            console.log("Loading Razorpay SDK...");
             const loadScript = () => new Promise((resolve, reject) => {
                 const existingScript = document.getElementById("razorpay-checkout-js");
                 if (existingScript) return resolve(true);
@@ -107,12 +113,17 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
             });
 
             await loadScript();
+            console.log("Razorpay SDK loaded.");
 
             if (!process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID) {
+                console.error("Missing NEXT_PUBLIC_RAZORPAY_KEY_ID");
                 alert("Razorpay API Key is missing. Please add NEXT_PUBLIC_RAZORPAY_KEY_ID to your environment.");
                 setBuying(false);
                 return;
             }
+
+            console.log("Initializing Razorpay with key:", process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID?.substring(0, 8) + "...");
+
 
             const options: RazorpayOptions = {
                 key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
