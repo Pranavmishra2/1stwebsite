@@ -9,6 +9,8 @@ import Typewriter from "@/components/Typewriter";
 import AnimatedCounter from "@/components/AnimatedCounter";
 import TestimonialsMarquee from "@/components/TestimonialsMarquee";
 import NewsletterSection from "@/components/NewsletterSection";
+import { db } from "@/lib/firebase";
+import { collection, getDocs } from "firebase/firestore";
 
 function AnimateOnScroll({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -36,6 +38,15 @@ function AnimateOnScroll({ children, delay = 0 }: { children: React.ReactNode; d
 }
 
 export default function Home() {
+  const [userCount, setUserCount] = useState(0);
+  const [productCount, setProductCount] = useState(0);
+
+  useEffect(() => {
+    // Fetch real counts from Firestore
+    getDocs(collection(db, "subscribers")).then((s) => setUserCount(s.size)).catch(() => { });
+    getDocs(collection(db, "orders")).then((s) => setProductCount(s.size)).catch(() => { });
+  }, []);
+
   return (
     <div className="page-transition">
       {/* ===== HERO SECTION ===== */}
@@ -116,9 +127,9 @@ export default function Home() {
               }}
             >
               {[
-                { end: 10, suffix: "+", label: "AI Tools Built" },
-                { end: 50, suffix: "K+", label: "Lines of Code" },
-                { end: 1, suffix: "K+", label: "Happy Users" },
+                { end: products.length, suffix: "", label: "Products Live" },
+                { end: productCount, suffix: "", label: "Orders Placed" },
+                { end: userCount, suffix: "", label: "Users Joined" },
               ].map((stat) => (
                 <div key={stat.label} style={{ textAlign: "center" }}>
                   <p className="gradient-text" style={{ fontSize: "2rem", fontWeight: 800 }}>
@@ -247,10 +258,10 @@ export default function Home() {
                         {product.tagline}
                       </p>
                       <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                        <span style={{ fontSize: "1.25rem", fontWeight: 700, color: "#22d3ee" }}>${product.price}</span>
+                        <span style={{ fontSize: "1.25rem", fontWeight: 700, color: "#22d3ee" }}>₹{product.price}</span>
                         {product.originalPrice && (
                           <span style={{ fontSize: "0.85rem", color: "#475569", textDecoration: "line-through" }}>
-                            ${product.originalPrice}
+                            ₹{product.originalPrice}
                           </span>
                         )}
                       </div>

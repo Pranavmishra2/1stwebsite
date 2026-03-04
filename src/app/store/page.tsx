@@ -95,9 +95,9 @@ export default function StorePage() {
                                             <p style={{ fontSize: "0.875rem", color: "#64748b", lineHeight: 1.5, marginBottom: 20 }}>{product.tagline}</p>
                                             <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                                                 <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                                                    <span style={{ fontSize: "1.4rem", fontWeight: 700, color: "#22d3ee" }}>${product.price}</span>
+                                                    <span style={{ fontSize: "1.4rem", fontWeight: 700, color: "#22d3ee" }}>₹{product.price}</span>
                                                     {product.originalPrice && (
-                                                        <span style={{ fontSize: "0.9rem", color: "#475569", textDecoration: "line-through" }}>${product.originalPrice}</span>
+                                                        <span style={{ fontSize: "0.9rem", color: "#475569", textDecoration: "line-through" }}>₹{product.originalPrice}</span>
                                                     )}
                                                 </div>
                                                 <span style={{ fontSize: "0.8rem", fontWeight: 600, color: "#a855f7" }}>View Details →</span>
