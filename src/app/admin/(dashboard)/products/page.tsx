@@ -46,15 +46,27 @@ export default function AdminProductsPage() {
         setShowEditor(true);
     };
 
+    const [saveError, setSaveError] = useState("");
+
     const handleSave = async () => {
-        if (!form.name || !form.price) return;
+        if (!form.name || !form.price) { alert("Name and Price are required!"); return; }
         setSaving(true);
+        setSaveError("");
         try {
-            // Use download URL from form, or file name if file was selected
             let downloadUrl = form.downloadUrl;
-            if (productFile && !downloadUrl) {
-                // Store file name — admin can upload to Google Drive/Dropbox and paste URL
-                downloadUrl = productFile.name;
+            if (productFile) {
+                if (productFile.size > 1024 * 1024) {
+                    setSaveError("File too large! Max 1MB. Use Download URL for bigger files.");
+                    setSaving(false);
+                    return;
+                }
+                // Convert small file to base64 and store in Firestore
+                downloadUrl = await new Promise<string>((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = () => resolve(reader.result as string);
+                    reader.onerror = () => reject("File read failed");
+                    reader.readAsDataURL(productFile);
+                });
             }
 
             const productData = {
@@ -80,6 +92,7 @@ export default function AdminProductsPage() {
             setShowEditor(false);
         } catch (err) {
             console.error("Error saving product:", err);
+            setSaveError("Failed to save product. Try again or check console.");
         }
         setSaving(false);
     };
@@ -168,6 +181,13 @@ export default function AdminProductsPage() {
                             </div>
 
                             <InputField label="Or Enter Download URL" value={form.downloadUrl} onChange={(v) => setForm({ ...form, downloadUrl: v })} />
+
+
+                            {saveError && (
+                                <div style={{ padding: "10px 16px", borderRadius: 8, background: "rgba(239,68,68,0.1)", border: "1px solid rgba(239,68,68,0.2)", color: "#f87171", fontSize: "0.85rem" }}>
+                                    ⚠️ {saveError}
+                                </div>
+                            )}
 
                             <div style={{ display: "flex", gap: 12, justifyContent: "flex-end", marginTop: 8 }}>
                                 <button className="gradient-btn-outline" onClick={() => setShowEditor(false)} style={{ padding: "10px 24px" }}>Cancel</button>
