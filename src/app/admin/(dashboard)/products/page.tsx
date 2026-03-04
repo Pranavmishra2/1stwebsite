@@ -12,8 +12,9 @@ export default function AdminProductsPage() {
     const [saving, setSaving] = useState(false);
 
     const [form, setForm] = useState({
-        name: "", slug: "", tagline: "", description: "", category: "AI Tools", price: "", originalPrice: "", features: "",
+        name: "", slug: "", tagline: "", description: "", category: "AI Tools", price: "", originalPrice: "", features: "", downloadUrl: "",
     });
+    const [productFile, setProductFile] = useState<File | null>(null);
 
     const fetchProducts = async () => {
         setLoading(true);
@@ -30,7 +31,7 @@ export default function AdminProductsPage() {
 
     const openNewProduct = () => {
         setEditingProduct(null);
-        setForm({ name: "", slug: "", tagline: "", description: "", category: "AI Tools", price: "", originalPrice: "", features: "" });
+        setForm({ name: "", slug: "", tagline: "", description: "", category: "AI Tools", price: "", originalPrice: "", features: "", downloadUrl: "" });
         setShowEditor(true);
     };
 
@@ -39,8 +40,9 @@ export default function AdminProductsPage() {
         setForm({
             name: product.name, slug: product.slug, tagline: product.tagline, description: product.description || "",
             category: product.category, price: product.price.toString(), originalPrice: product.originalPrice?.toString() || "",
-            features: product.features?.join("\n") || "",
+            features: product.features?.join("\n") || "", downloadUrl: product.downloadUrl || "",
         });
+        setProductFile(null);
         setShowEditor(true);
     };
 
@@ -48,6 +50,16 @@ export default function AdminProductsPage() {
         if (!form.name || !form.price) return;
         setSaving(true);
         try {
+            // If file selected, convert to base64 data URL for download
+            let downloadUrl = form.downloadUrl;
+            if (productFile) {
+                downloadUrl = await new Promise<string>((resolve) => {
+                    const reader = new FileReader();
+                    reader.onload = () => resolve(reader.result as string);
+                    reader.readAsDataURL(productFile);
+                });
+            }
+
             const productData = {
                 name: form.name,
                 slug: form.slug || form.name.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, ""),
@@ -59,6 +71,7 @@ export default function AdminProductsPage() {
                 features: form.features.split("\n").filter(Boolean),
                 faqs: [],
                 status: "Active" as const,
+                downloadUrl,
             };
 
             if (editingProduct?.id) {
@@ -130,17 +143,34 @@ export default function AdminProductsPage() {
 
                             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
                                 <div>
-                                    <label style={labelStyle}>Price (USD) *</label>
-                                    <input type="number" value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} placeholder="49" style={{ ...inputStyle, color: "#22d3ee", fontWeight: 700 }} />
+                                    <label style={labelStyle}>Price (₹ INR) *</label>
+                                    <input type="number" value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} placeholder="499" style={{ ...inputStyle, color: "#22d3ee", fontWeight: 700 }} />
                                 </div>
                                 <div>
-                                    <label style={labelStyle}>Original Price</label>
-                                    <input type="number" value={form.originalPrice} onChange={(e) => setForm({ ...form, originalPrice: e.target.value })} placeholder="79 (optional)" style={{ ...inputStyle, textDecoration: "line-through", color: "#475569" }} />
+                                    <label style={labelStyle}>Original Price (₹)</label>
+                                    <input type="number" value={form.originalPrice} onChange={(e) => setForm({ ...form, originalPrice: e.target.value })} placeholder="999 (optional)" style={{ ...inputStyle, textDecoration: "line-through", color: "#475569" }} />
                                 </div>
                             </div>
 
                             <TextAreaField label="Description" value={form.description} onChange={(v) => setForm({ ...form, description: v })} rows={4} />
                             <TextAreaField label="Features (one per line)" value={form.features} onChange={(v) => setForm({ ...form, features: v })} rows={4} mono />
+
+                            {/* File Upload */}
+                            <div>
+                                <label style={labelStyle}>📁 Product File (Upload from PC/Phone)</label>
+                                <div style={{ ...inputStyle, padding: 0, overflow: "hidden", display: "flex", alignItems: "center" }}>
+                                    <input
+                                        type="file"
+                                        onChange={(e) => setProductFile(e.target.files?.[0] || null)}
+                                        style={{ width: "100%", padding: "12px 16px", cursor: "pointer" }}
+                                    />
+                                </div>
+                                {productFile && <p style={{ fontSize: "0.78rem", color: "#34d399", marginTop: 6 }}>✅ {productFile.name} ({(productFile.size / 1024).toFixed(0)} KB)</p>}
+                                {!productFile && form.downloadUrl && <p style={{ fontSize: "0.78rem", color: "#a5b4fc", marginTop: 6 }}>📎 File already uploaded</p>}
+                                <p style={{ fontSize: "0.72rem", color: "#475569", marginTop: 4 }}>Upload the product file users will download after payment</p>
+                            </div>
+
+                            <InputField label="Or Enter Download URL" value={form.downloadUrl} onChange={(v) => setForm({ ...form, downloadUrl: v })} />
 
                             <div style={{ display: "flex", gap: 12, justifyContent: "flex-end", marginTop: 8 }}>
                                 <button className="gradient-btn-outline" onClick={() => setShowEditor(false)} style={{ padding: "10px 24px" }}>Cancel</button>
@@ -187,8 +217,8 @@ export default function AdminProductsPage() {
                             <p style={{ fontSize: "0.82rem", color: "#64748b", marginBottom: 16, lineHeight: 1.4 }}>{product.tagline}</p>
 
                             <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
-                                <span style={{ fontSize: "1.3rem", fontWeight: 700, color: "#22d3ee" }}>${product.price}</span>
-                                {product.originalPrice && <span style={{ fontSize: "0.85rem", color: "#475569", textDecoration: "line-through" }}>${product.originalPrice}</span>}
+                                <span style={{ fontSize: "1.3rem", fontWeight: 700, color: "#22d3ee" }}>₹{product.price}</span>
+                                {product.originalPrice && <span style={{ fontSize: "0.85rem", color: "#475569", textDecoration: "line-through" }}>₹{product.originalPrice}</span>}
                             </div>
 
                             <div style={{ display: "flex", gap: 8 }}>

@@ -26,6 +26,7 @@ export interface Product {
     badge?: string;
     features: string[];
     faqs: { question: string; answer: string }[];
+    downloadUrl?: string;
     status: "Active" | "Draft";
     createdAt: Date;
     updatedAt: Date;
