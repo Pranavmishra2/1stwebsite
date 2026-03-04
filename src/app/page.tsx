@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
-import { products } from "@/data/products";
 import { blogPosts } from "@/data/blogs";
+import { getProducts, Product as DbProduct } from "@/lib/productService";
 import { useEffect, useRef, useState } from "react";
 import ParticleBackground from "@/components/ParticleBackground";
 import TiltCard from "@/components/TiltCard";
@@ -40,11 +40,16 @@ function AnimateOnScroll({ children, delay = 0 }: { children: React.ReactNode; d
 export default function Home() {
   const [userCount, setUserCount] = useState(0);
   const [productCount, setProductCount] = useState(0);
+  const [products, setProducts] = useState<DbProduct[]>([]);
 
   useEffect(() => {
-    // Fetch real counts from Firestore
+    // Fetch real counts and products from Firestore
     getDocs(collection(db, "subscribers")).then((s) => setUserCount(s.size)).catch(() => { });
     getDocs(collection(db, "orders")).then((s) => setProductCount(s.size)).catch(() => { });
+
+    getProducts().then((data) => {
+      setProducts(data.filter((p) => p.status === "Active"));
+    });
   }, []);
 
   return (

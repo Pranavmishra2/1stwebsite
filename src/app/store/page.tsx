@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
-import { products } from "@/data/products";
 import { useState, useEffect, useRef } from "react";
+import { getProducts, Product as DbProduct } from "@/lib/productService";
 
 function AnimateOnScroll({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
     const ref = useRef<HTMLDivElement>(null);
@@ -18,11 +18,19 @@ function AnimateOnScroll({ children, delay = 0 }: { children: React.ReactNode; d
     );
 }
 
-const storeCategories = ["All", ...Array.from(new Set(products.map((p) => p.category)))];
-
 export default function StorePage() {
     const [activeCategory, setActiveCategory] = useState("All");
+    const [products, setProducts] = useState<DbProduct[]>([]);
+    const [loading, setLoading] = useState(true);
 
+    useEffect(() => {
+        getProducts().then((data) => {
+            setProducts(data.filter((p) => p.status === "Active"));
+            setLoading(false);
+        });
+    }, []);
+
+    const storeCategories = ["All", ...Array.from(new Set(products.map((p) => p.category)))];
     const filtered = activeCategory === "All" ? products : products.filter((p) => p.category === activeCategory);
 
     return (

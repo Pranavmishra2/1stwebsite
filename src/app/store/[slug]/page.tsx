@@ -1,8 +1,8 @@
 "use client";
-import { products } from "@/data/products";
 import Link from "next/link";
-import { useState, use } from "react";
+import { useState, use, useEffect } from "react";
 import { createOrder, updateOrderStatus } from "@/lib/orderService";
+import { getProductBySlug, Product as DbProduct } from "@/lib/productService";
 
 declare global {
     interface Window {
@@ -35,10 +35,26 @@ interface RazorpayResponse {
 
 export default function ProductDetailPage({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = use(params);
-    const product = products.find((p) => p.slug === slug);
+    const [product, setProduct] = useState<DbProduct | null>(null);
+    const [loading, setLoading] = useState(true);
     const [openFaq, setOpenFaq] = useState<number | null>(null);
     const [buying, setBuying] = useState(false);
     const [paymentStatus, setPaymentStatus] = useState<"idle" | "success" | "failed">("idle");
+
+    useEffect(() => {
+        getProductBySlug(slug).then((data) => {
+            setProduct(data);
+            setLoading(false);
+        });
+    }, [slug]);
+
+    if (loading) {
+        return (
+            <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <p className="gradient-text" style={{ fontSize: "1.2rem", fontWeight: 700 }}>Loading product...</p>
+            </div>
+        );
+    }
 
     if (!product) {
         return (
@@ -60,7 +76,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
             const res = await fetch("/api/razorpay", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ amount: product.price, productName: product.name, productId: product.id }),
+                body: JSON.stringify({ amount: product.price, productName: product.name, productId: product.id || "" }),
             });
             const data = await res.json();
             if (!res.ok) throw new Error(data.error);
@@ -68,7 +84,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
             // 2. Save order in Firestore
             const firestoreOrderId = await createOrder({
                 orderId: data.orderId,
-                productId: product.id,
+                productId: product.id || "",
                 productName: product.name,
                 amount: product.price,
                 currency: "INR",
