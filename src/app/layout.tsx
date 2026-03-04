@@ -10,6 +10,29 @@ export const metadata: Metadata = {
   description:
     "Pranav Kashyap's personal brand website — AI tools, digital products, tutorials, and insights on building with AI and automation.",
   keywords: ["Pranav Kashyap", "AI Developer", "Digital Products", "Tech Builder", "AI Tools"],
+  metadataBase: new URL("https://pranavkashyap.com"), // Change to actual production domain
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: "https://pranavkashyap.com",
+    siteName: "Pranav Kashyap",
+    title: "Pranav Kashyap — AI Developer | Digital Creator",
+    description: "Explore premium digital products, AI tools, and tech insights by Pranav Kashyap.",
+    images: [
+      {
+        url: "/og-image.png", // We will create a placeholder for this or use a default image path
+        width: 1200,
+        height: 630,
+        alt: "Pranav Kashyap — Personal Brand",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Pranav Kashyap — AI Developer | Digital Creator",
+    description: "Explore premium digital products, AI tools, and tech insights by Pranav Kashyap.",
+    images: ["/og-image.png"],
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
