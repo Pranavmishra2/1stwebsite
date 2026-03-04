@@ -50,14 +50,11 @@ export default function AdminProductsPage() {
         if (!form.name || !form.price) return;
         setSaving(true);
         try {
-            // If file selected, convert to base64 data URL for download
+            // Use download URL from form, or file name if file was selected
             let downloadUrl = form.downloadUrl;
-            if (productFile) {
-                downloadUrl = await new Promise<string>((resolve) => {
-                    const reader = new FileReader();
-                    reader.onload = () => resolve(reader.result as string);
-                    reader.readAsDataURL(productFile);
-                });
+            if (productFile && !downloadUrl) {
+                // Store file name — admin can upload to Google Drive/Dropbox and paste URL
+                downloadUrl = productFile.name;
             }
 
             const productData = {
