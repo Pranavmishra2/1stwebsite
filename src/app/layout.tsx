@@ -10,11 +10,11 @@ export const metadata: Metadata = {
   description:
     "Pranav Kashyap's personal brand website — AI tools, digital products, tutorials, and insights on building with AI and automation.",
   keywords: ["Pranav Kashyap", "AI Developer", "Digital Products", "Tech Builder", "AI Tools"],
-  metadataBase: new URL("https://pranavkashyap.com"), // Change to actual production domain
+  metadataBase: new URL("https://1stwebsite-sigma.vercel.app"), // Using the live Vercel domain
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://pranavkashyap.com",
+    url: "https://1stwebsite-sigma.vercel.app",
     siteName: "Pranav Kashyap",
     title: "Pranav Kashyap — AI Developer | Digital Creator",
     description: "Explore premium digital products, AI tools, and tech insights by Pranav Kashyap.",

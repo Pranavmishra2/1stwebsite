@@ -1,7 +1,7 @@
 import { MetadataRoute } from "next";
 
 export default function robots(): MetadataRoute.Robots {
-    const baseUrl = "https://pranavkashyap.com"; // Change to actual domain
+    const baseUrl = "https://1stwebsite-sigma.vercel.app"; // Using the live Vercel domain
 
     return {
         rules: {

@@ -3,7 +3,7 @@ import { getProducts } from "@/lib/productService";
 import { blogPosts } from "@/data/blogs";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-    const baseUrl = "https://pranavkashyap.com"; // Change to actual domain
+    const baseUrl = "https://1stwebsite-sigma.vercel.app"; // Using the live Vercel domain
 
     // Fetch dynamic content
     const products = await getProducts();
