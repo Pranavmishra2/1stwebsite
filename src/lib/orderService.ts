@@ -35,7 +35,8 @@ export async function getOrders(): Promise<Order[]> {
 }
 
 export async function getUserOrders(email: string): Promise<Order[]> {
-    const q = query(collection(db, COLLECTION), where("customerEmail", "==", email), orderBy("createdAt", "desc"));
+    // We only use where() here. Using where() + orderBy() requires a composite index in Firestore.
+    const q = query(collection(db, COLLECTION), where("customerEmail", "==", email));
     const snapshot = await getDocs(q);
     const allOrders = snapshot.docs.map((d) => ({
         id: d.id,
@@ -44,8 +45,10 @@ export async function getUserOrders(email: string): Promise<Order[]> {
         paidAt: d.data().paidAt?.toDate?.() || null,
     })) as Order[];
 
-    // Filter paid orders client-side to avoid needing a composite index for now
-    return allOrders.filter(o => o.status === "paid");
+    // Filter paid orders and sort by date client-side to completely avoid composite index requirements
+    return allOrders
+        .filter(o => o.status === "paid")
+        .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
 }
 
 export async function createOrder(data: Omit<Order, "id" | "createdAt">): Promise<string> {
