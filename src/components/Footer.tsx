@@ -3,11 +3,11 @@ import Link from "next/link";
 import Image from "next/image";
 
 const socialLinks = [
-    { label: "Twitter", href: "https://twitter.com/pranavkashyap", icon: "𝕏" },
+    // { label: "Twitter", href: "https://twitter.com/pranavkashyap", icon: "𝕏" },
     { label: "Instagram", href: "https://www.instagram.com/launchpadaidev", icon: "📸" },
-    { label: "GitHub", href: "https://github.com/pranavkashyap", icon: "⌘" },
-    { label: "LinkedIn", href: "https://linkedin.com/in/pranavkashyap", icon: "in" },
-    { label: "YouTube", href: "https://youtube.com/@pranavkashyap", icon: "▶" },
+    // { label: "GitHub", href: "https://github.com/pranavkashyap", icon: "⌘" },
+    // { label: "LinkedIn", href: "https://linkedin.com/in/pranavkashyap", icon: "in" },
+    // { label: "YouTube", href: "https://youtube.com/@pranavkashyap", icon: "▶" },
 ];
 
 const quickLinks = [
