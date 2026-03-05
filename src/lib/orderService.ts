@@ -35,14 +35,17 @@ export async function getOrders(): Promise<Order[]> {
 }
 
 export async function getUserOrders(email: string): Promise<Order[]> {
-    const q = query(collection(db, COLLECTION), where("customerEmail", "==", email), where("status", "==", "paid"), orderBy("createdAt", "desc"));
+    const q = query(collection(db, COLLECTION), where("customerEmail", "==", email), orderBy("createdAt", "desc"));
     const snapshot = await getDocs(q);
-    return snapshot.docs.map((d) => ({
+    const allOrders = snapshot.docs.map((d) => ({
         id: d.id,
         ...d.data(),
         createdAt: d.data().createdAt?.toDate?.() || new Date(),
         paidAt: d.data().paidAt?.toDate?.() || null,
     })) as Order[];
+
+    // Filter paid orders client-side to avoid needing a composite index for now
+    return allOrders.filter(o => o.status === "paid");
 }
 
 export async function createOrder(data: Omit<Order, "id" | "createdAt">): Promise<string> {

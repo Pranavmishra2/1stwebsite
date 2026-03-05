@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { useState, use, useEffect } from "react";
-import { createOrder, updateOrderStatus } from "@/lib/orderService";
+import { createOrder, updateOrderStatus, getUserOrders } from "@/lib/orderService";
 import { getProductBySlug, Product as DbProduct } from "@/lib/productService";
 import RatingSection from "@/components/RatingSection";
 import { useUser } from "@/context/UserContext";
@@ -44,6 +44,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
     const [openFaq, setOpenFaq] = useState<number | null>(null);
     const [buying, setBuying] = useState(false);
     const [paymentStatus, setPaymentStatus] = useState<"idle" | "success" | "failed">("idle");
+    const [hasPurchased, setHasPurchased] = useState(false);
 
     useEffect(() => {
         getProductBySlug(slug).then((data) => {
@@ -51,6 +52,18 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
             setLoading(false);
         });
     }, [slug]);
+
+    useEffect(() => {
+        if (user && user.email && product) {
+            // Check if user has already bought this product
+            getUserOrders(user.email).then(orders => {
+                const alreadyBought = orders.some(o => o.productId === product.id && o.status === "paid");
+                setHasPurchased(alreadyBought);
+            }).catch(err => console.error("Error checking purchases:", err));
+        } else {
+            setHasPurchased(false);
+        }
+    }, [user, product]);
 
     if (loading) {
         return (
@@ -295,14 +308,26 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
                                         </>
                                     )}
                                 </div>
-                                <button
-                                    className="gradient-btn"
-                                    onClick={handleBuyNow}
-                                    disabled={buying}
-                                    style={{ width: "100%", padding: 16, fontSize: "1rem", opacity: buying ? 0.6 : 1, cursor: buying ? "wait" : "pointer" }}
-                                >
-                                    {buying ? "⏳ Processing..." : `🛒 Buy Now — ₹${product.price}`}
-                                </button>
+                                {hasPurchased ? (
+                                    <a
+                                        href={product.downloadUrl || "/dashboard"}
+                                        className="gradient-btn"
+                                        style={{ width: "100%", padding: 16, fontSize: "1rem", display: "inline-block", textAlign: "center", textDecoration: "none" }}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                    >
+                                        📥 Download Again
+                                    </a>
+                                ) : (
+                                    <button
+                                        className="gradient-btn w-full shadow-[0_0_40px_-10px_rgba(168,85,247,0.5)] hover:shadow-[0_0_60px_-15px_rgba(168,85,247,0.7)]"
+                                        onClick={handleBuyNow}
+                                        disabled={buying}
+                                        style={{ width: "100%", padding: 16, fontSize: "1rem", opacity: buying ? 0.6 : 1, cursor: buying ? "wait" : "pointer" }}
+                                    >
+                                        {buying ? "⏳ Processing..." : `🛒 Buy Now — ₹${product.price}`}
+                                    </button>
+                                )}
                                 <p style={{ textAlign: "center", fontSize: "0.75rem", color: "#475569", marginTop: 12 }}>
                                     🔒 Secure Razorpay payment · UPI · Cards · Net Banking
                                 </p>
