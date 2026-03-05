@@ -1,23 +1,72 @@
 "use client";
-import { blogPosts } from "@/data/blogs";
-import { products } from "@/data/products";
+import { useEffect, useState } from "react";
+import { getProducts, Product } from "@/lib/productService";
+import { getOrders, Order } from "@/lib/orderService";
+import { getSubscribers } from "@/lib/adminServices";
 
 export default function AdminDashboard() {
-    const totalRevenue = products.reduce((sum, p) => sum + p.price, 0) * 12; // Simulated
-    const stats = [
-        { label: "Total Products", value: products.length, icon: "📦", color: "#6366f1" },
-        { label: "Blog Posts", value: blogPosts.length, icon: "📝", color: "#a855f7" },
-        { label: "Total Revenue", value: `$${totalRevenue.toLocaleString()}`, icon: "💰", color: "#22d3ee" },
-        { label: "Active Users", value: "1,247", icon: "👥", color: "#10b981" },
+    const [stats, setStats] = useState({
+        productsCount: 0,
+        usersCount: 0,
+        revenue: 0,
+        ordersCount: 0,
+    });
+    const [recentOrders, setRecentOrders] = useState<Order[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        async function fetchDashboardData() {
+            try {
+                // Fetch all data in parallel
+                const [allProducts, allOrders, allSubscribers] = await Promise.all([
+                    getProducts(),
+                    getOrders(),
+                    getSubscribers()
+                ]);
+
+                // Calculate total revenue (only from paid orders)
+                const paidOrders = allOrders.filter(o => o.status === "paid");
+                const totalRevenue = paidOrders.reduce((sum, order) => sum + order.amount, 0);
+
+                // Assuming registered users via orders + subscribers minus duplicates
+                const uniqueEmails = new Set([
+                    ...allOrders.map(o => o.customerEmail),
+                    ...allSubscribers.map(s => s.email)
+                ]);
+
+                setStats({
+                    productsCount: allProducts.length,
+                    usersCount: uniqueEmails.size,
+                    revenue: totalRevenue,
+                    ordersCount: allOrders.length
+                });
+
+                // Top 5 most recent orders
+                setRecentOrders(allOrders.slice(0, 5));
+            } catch (error) {
+                console.error("Failed to load dashboard data:", error);
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        fetchDashboardData();
+    }, []);
+
+    const displayStats = [
+        { label: "Total Products", value: stats.productsCount, icon: "📦", color: "#6366f1" },
+        { label: "Total Users", value: stats.usersCount, icon: "👥", color: "#a855f7" },
+        { label: "Total Revenue", value: `₹${stats.revenue.toLocaleString('en-IN')}`, icon: "💰", color: "#22d3ee" },
+        { label: "Total Orders", value: stats.ordersCount, icon: "🛒", color: "#10b981" },
     ];
 
-    const recentOrders = [
-        { id: "#ORD-001", product: "AI Content Engine", buyer: "arjun@gmail.com", amount: "$49", status: "Completed", date: "Mar 3, 2026" },
-        { id: "#ORD-002", product: "Smart Automation Kit", buyer: "sarah@gmail.com", amount: "$39", status: "Completed", date: "Mar 2, 2026" },
-        { id: "#ORD-003", product: "AI Image Toolkit", buyer: "rahul@outlook.com", amount: "$59", status: "Pending", date: "Mar 2, 2026" },
-        { id: "#ORD-004", product: "Prompt Mastery Guide", buyer: "emily@yahoo.com", amount: "$29", status: "Completed", date: "Mar 1, 2026" },
-        { id: "#ORD-005", product: "AI Content Engine", buyer: "vikram@gmail.com", amount: "$49", status: "Completed", date: "Mar 1, 2026" },
-    ];
+    if (loading) {
+        return (
+            <div style={{ padding: "40px", textAlign: "center", color: "#94a3b8" }}>
+                <p>Loading real-time dashboard data...</p>
+            </div>
+        );
+    }
 
     return (
         <div className="page-transition">
@@ -33,7 +82,7 @@ export default function AdminDashboard() {
 
             {/* Stats Grid */}
             <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))", gap: 16, marginBottom: 40 }}>
-                {stats.map((stat) => (
+                {displayStats.map((stat) => (
                     <div
                         key={stat.label}
                         className="glass-card"
@@ -88,30 +137,41 @@ export default function AdminDashboard() {
                             </tr>
                         </thead>
                         <tbody>
-                            {recentOrders.map((order) => (
-                                <tr key={order.id} style={{ borderBottom: "1px solid rgba(99,102,241,0.05)", transition: "background 0.2s" }}>
-                                    <td style={{ padding: "14px 16px", fontSize: "0.85rem", color: "#a5b4fc", fontWeight: 600 }}>{order.id}</td>
-                                    <td style={{ padding: "14px 16px", fontSize: "0.85rem", color: "#f1f5f9" }}>{order.product}</td>
-                                    <td style={{ padding: "14px 16px", fontSize: "0.85rem", color: "#94a3b8" }}>{order.buyer}</td>
-                                    <td style={{ padding: "14px 16px", fontSize: "0.85rem", color: "#22d3ee", fontWeight: 600 }}>{order.amount}</td>
-                                    <td style={{ padding: "14px 16px" }}>
-                                        <span
-                                            style={{
-                                                padding: "4px 12px",
-                                                borderRadius: 50,
-                                                fontSize: "0.72rem",
-                                                fontWeight: 600,
-                                                background: order.status === "Completed" ? "rgba(16, 185, 129, 0.1)" : "rgba(234, 179, 8, 0.1)",
-                                                color: order.status === "Completed" ? "#34d399" : "#facc15",
-                                                border: `1px solid ${order.status === "Completed" ? "rgba(16,185,129,0.2)" : "rgba(234,179,8,0.2)"}`,
-                                            }}
-                                        >
-                                            {order.status}
-                                        </span>
+                            {recentOrders.length === 0 ? (
+                                <tr>
+                                    <td colSpan={6} style={{ padding: "24px", textAlign: "center", color: "#64748b" }}>
+                                        No recent orders found.
                                     </td>
-                                    <td style={{ padding: "14px 16px", fontSize: "0.85rem", color: "#475569" }}>{order.date}</td>
                                 </tr>
-                            ))}
+                            ) : (
+                                recentOrders.map((order) => (
+                                    <tr key={order.id} style={{ borderBottom: "1px solid rgba(99,102,241,0.05)", transition: "background 0.2s" }}>
+                                        <td style={{ padding: "14px 16px", fontSize: "0.85rem", color: "#a5b4fc", fontWeight: 600 }}>{order.orderId || order.id?.substring(0, 8)}</td>
+                                        <td style={{ padding: "14px 16px", fontSize: "0.85rem", color: "#f1f5f9" }}>{order.productName}</td>
+                                        <td style={{ padding: "14px 16px", fontSize: "0.85rem", color: "#94a3b8" }}>{order.customerEmail}</td>
+                                        <td style={{ padding: "14px 16px", fontSize: "0.85rem", color: "#22d3ee", fontWeight: 600 }}>₹{order.amount.toLocaleString('en-IN')}</td>
+                                        <td style={{ padding: "14px 16px" }}>
+                                            <span
+                                                style={{
+                                                    padding: "4px 12px",
+                                                    borderRadius: 50,
+                                                    fontSize: "0.72rem",
+                                                    fontWeight: 600,
+                                                    background: order.status === "paid" ? "rgba(16, 185, 129, 0.1)" : "rgba(234, 179, 8, 0.1)",
+                                                    color: order.status === "paid" ? "#34d399" : "#facc15",
+                                                    border: `1px solid ${order.status === "paid" ? "rgba(16,185,129,0.2)" : "rgba(234,179,8,0.2)"}`,
+                                                    textTransform: "capitalize"
+                                                }}
+                                            >
+                                                {order.status}
+                                            </span>
+                                        </td>
+                                        <td style={{ padding: "14px 16px", fontSize: "0.85rem", color: "#475569" }}>
+                                            {order.createdAt.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+                                        </td>
+                                    </tr>
+                                ))
+                            )}
                         </tbody>
                     </table>
                 </div>
