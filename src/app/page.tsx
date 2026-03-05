@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import { motion } from "framer-motion";
 import { blogPosts } from "@/data/blogs";
 import { getProducts, Product as DbProduct } from "@/lib/productService";
 import { useEffect, useRef, useState } from "react";
@@ -90,17 +91,15 @@ export default function Home() {
           </AnimateOnScroll>
 
           <AnimateOnScroll delay={0.1}>
-            <h1
-              style={{
-                fontSize: "clamp(2.5rem, 7vw, 5rem)",
-                fontWeight: 800,
-                lineHeight: 1.1,
-                marginBottom: "24px",
-              }}
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              className="text-5xl md:text-7xl font-extrabold tracking-tight mb-6"
             >
-              Hey, I&apos;m{" "}
-              <span className="gradient-text-animated">Pranav Kashyap</span>
-            </h1>
+              Welcome to <br className="hidden md:block" />
+              <span className="gradient-text-animated">LaunchPad</span>
+            </motion.h1>
           </AnimateOnScroll>
 
           <AnimateOnScroll delay={0.2}>
@@ -165,8 +164,9 @@ export default function Home() {
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 300px), 1fr))", gap: "clamp(24px, 4vw, 40px)", alignItems: "center" }}>
             <AnimateOnScroll>
               <div>
-                <p style={{ color: "#94a3b8", lineHeight: 1.8, fontSize: "1.05rem", marginBottom: 20 }}>
-                  I&apos;m <strong style={{ color: "#f1f5f9" }}>Pranav Kashyap</strong> — an AI developer, digital creator, and tech entrepreneur focused on building tools that make technology accessible and powerful for everyone.
+                <p className="text-lg text-slate-400 mb-6 leading-relaxed">
+                  Welcome to <strong style={{ color: "#f1f5f9" }}>LaunchPad</strong> — your ultimate hub for premium digital products, AI tools, and technical resources.
+                  We build tools that make technology accessible and powerful for everyone.
                 </p>
                 <p style={{ color: "#94a3b8", lineHeight: 1.8, fontSize: "1.05rem", marginBottom: 28 }}>
                   My vision is to bridge the gap between cutting-edge AI and practical, everyday use cases. Whether it&apos;s automating workflows, generating content, or building intelligent applications — I believe the right tools can 10x anyone&apos;s output.

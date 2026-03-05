@@ -35,27 +35,22 @@ export default function Footer() {
                     {/* Brand */}
                     <div>
                         <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "16px" }}>
-                            <div
+                            <Link
+                                href="/"
                                 style={{
-                                    width: 36,
-                                    height: 36,
-                                    borderRadius: 10,
-                                    background: "linear-gradient(135deg, #6366f1, #a855f7)",
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "center",
+                                    textDecoration: "none",
+                                    fontSize: "1.5rem",
                                     fontWeight: 800,
-                                    fontSize: "1rem",
                                     color: "white",
+                                    letterSpacing: "-0.025em"
                                 }}
                             >
-                                PK
-                            </div>
-                            <span style={{ fontWeight: 700, fontSize: "1.15rem", color: "#f1f5f9" }}>
-                                Pranav <span style={{ color: "#a855f7" }}>Kashyap</span>
-                            </span>
+                                Launch<span style={{ color: "#a855f7" }}>Pad</span>
+                            </Link>
+
                         </div>
-                        <p style={{ color: "#64748b", fontSize: "0.9rem", lineHeight: 1.6, maxWidth: 280 }}>
+
+                        <p style={{ color: "#94a3b8", fontSize: "0.95rem", lineHeight: 1.6, marginTop: "16px" }}>
                             AI Developer, Digital Creator & Tech Builder. Building tools and content that empower creators and entrepreneurs.
                         </p>
                     </div>
@@ -82,10 +77,11 @@ export default function Footer() {
                     <div>
                         <h4 style={{ fontWeight: 600, fontSize: "0.95rem", color: "#e2e8f0", marginBottom: "16px" }}>Contact</h4>
                         <a
-                            href="mailto:hello@pranavkashyap.com"
+                            href="mailto:hello@launchpad.dev"
+                            className="hover:text-purple-400 transition-colors"
                             style={{ color: "#a855f7", textDecoration: "none", fontSize: "0.9rem" }}
                         >
-                            hello@pranavkashyap.com
+                            hello@launchpad.dev
                         </a>
                         <div style={{ display: "flex", gap: "12px", marginTop: "20px" }}>
                             {socialLinks.map((s) => (
@@ -138,11 +134,11 @@ export default function Footer() {
                         gap: "12px",
                     }}
                 >
-                    <p style={{ color: "#475569", fontSize: "0.8rem" }}>
-                        © {new Date().getFullYear()} Pranav Kashyap. All rights reserved.
+                    <p style={{ color: "#64748b", fontSize: "0.85rem", margin: 0 }}>
+                        © {new Date().getFullYear()} LaunchPad. Built for Creators.
                     </p>
-                    <p style={{ color: "#475569", fontSize: "0.8rem" }}>
-                        Built & Managed by <span style={{ color: "#a855f7" }}>Pranav Kashyap</span>
+                    <p style={{ color: "#64748b", fontSize: "0.85rem", margin: 0, marginTop: "8px" }}>
+                        Built & Managed by <span style={{ color: "#a855f7" }}>LaunchPad Team</span>
                     </p>
                 </div>
             </div>

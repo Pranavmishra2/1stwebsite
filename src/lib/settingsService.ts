@@ -17,16 +17,16 @@ export interface SiteSettings {
 const DOC_ID = "site_settings";
 
 const defaultSettings: SiteSettings = {
-    siteName: "Pranav Kashyap",
-    tagline: "AI Developer | Digital Creator | Tech Builder",
-    heroTitle: "Hey, I'm Pranav Kashyap",
-    heroSubtitle: "I build AI-powered tools, share knowledge through content, and help creators & entrepreneurs leverage technology to grow faster.",
-    aboutTitle: "Building the Future with AI",
-    aboutDescription: "I'm Pranav Kashyap — an AI developer, digital creator, and tech entrepreneur focused on building tools that make technology accessible and powerful for everyone.",
-    socialLinks: { github: "#", twitter: "#", linkedin: "#", youtube: "#", instagram: "#" },
-    footerText: "© 2025 Pranav Kashyap. All rights reserved.",
-    contactEmail: "hello@pranavkashyap.com",
-    logoText: "PK",
+    siteName: "LaunchPad",
+    tagline: "Your Digital Product Hub",
+    heroTitle: "Welcome to LaunchPad",
+    heroSubtitle: "Discover premium tools, in-depth tech guides, and resources designed to accelerate your growth.",
+    aboutTitle: "Building the Future with AI", // Kept this field
+    aboutDescription: "LaunchPad is your all-in-one platform for high-quality digital assets, tech tutorials, and automation tools. Built to help creators and developers build faster and smarter.",
+    socialLinks: { github: "#", twitter: "#", linkedin: "#", youtube: "#", instagram: "#" }, // Kept this field
+    footerText: "© 2025 LaunchPad. Built for Creators.",
+    contactEmail: "hello@launchpad.dev",
+    logoText: "PK", // Kept this field
 };
 
 export async function getSiteSettings(): Promise<SiteSettings> {

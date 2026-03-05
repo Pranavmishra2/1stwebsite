@@ -2,9 +2,9 @@ import { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
     return {
-        name: "Pranav Kashyap - AI Developer",
-        short_name: "Pranav",
-        description: "Explore premium digital products, AI tools, and tech insights by Pranav Kashyap.",
+        name: "LaunchPad - Digital Products & AI Tools",
+        short_name: "LaunchPad",
+        description: "Explore premium digital products, AI tools, and tech insights on LaunchPad.",
         start_url: "/",
         display: "standalone",
         background_color: "#0f0f14",

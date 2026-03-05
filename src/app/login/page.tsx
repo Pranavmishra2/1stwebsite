@@ -72,7 +72,7 @@ function LoginContent() {
                 </div>
 
                 <h1 style={{ fontSize: "1.8rem", fontWeight: 800, marginBottom: 8 }}>
-                    Welcome to <span className="gradient-text-animated">Pranav Kashyap</span>
+                    Welcome to <span className="gradient-text-animated">LaunchPad</span>
                 </h1>
                 <p style={{ color: "#64748b", fontSize: "0.9rem", lineHeight: 1.6, marginBottom: 8 }}>
                     AI Developer · Digital Creator · Tech Builder

@@ -24,7 +24,7 @@ export default function AdminDashboard() {
             {/* Header */}
             <div style={{ marginBottom: 32 }}>
                 <h1 style={{ fontSize: "1.8rem", fontWeight: 800, marginBottom: 6 }}>
-                    Welcome back, <span className="gradient-text">Pranav</span> 👋
+                    Welcome back, <span className="gradient-text">Admin</span> 👋
                 </h1>
                 <p style={{ color: "#64748b", fontSize: "0.9rem" }}>
                     Here&apos;s what&apos;s happening with your products and content.

@@ -45,26 +45,8 @@ export default function Navbar() {
         >
             <div className="container-custom" style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                 {/* Logo */}
-                <Link href="/" style={{ textDecoration: "none", display: "flex", alignItems: "center", gap: "10px" }}>
-                    <div
-                        style={{
-                            width: 36,
-                            height: 36,
-                            borderRadius: 10,
-                            background: "linear-gradient(135deg, #6366f1, #a855f7)",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            fontWeight: 800,
-                            fontSize: "1rem",
-                            color: "white",
-                        }}
-                    >
-                        PK
-                    </div>
-                    <span style={{ fontWeight: 700, fontSize: "1.15rem", color: "#f1f5f9" }}>
-                        Pranav <span style={{ color: "#a855f7" }}>Kashyap</span>
-                    </span>
+                <Link href="/" style={{ textDecoration: "none", display: "flex", alignItems: "center", gap: "10px", fontSize: "1.25rem", fontWeight: "bold", color: "white", letterSpacing: "-0.025em" }}>
+                    Launch<span style={{ color: "#a855f7" }}>Pad</span>
                 </Link>
 
                 {/* Desktop Links */}
