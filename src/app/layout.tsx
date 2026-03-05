@@ -33,6 +33,22 @@ export const metadata: Metadata = {
     description: "Explore premium digital products, AI tools, and tech insights by Pranav Kashyap.",
     images: ["/og-image.png"],
   },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "Pranav Kashyap",
+  },
+  icons: {
+    apple: "/apple-icon.png",
+  },
+  manifest: "/manifest.json",
+};
+
+export const viewport = {
+  themeColor: "#0f0f14",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
