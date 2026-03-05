@@ -4,6 +4,7 @@ import Image from "next/image";
 
 const socialLinks = [
     { label: "Twitter", href: "https://twitter.com/pranavkashyap", icon: "𝕏" },
+    { label: "Instagram", href: "https://www.instagram.com/launchpadaidev", icon: "📸" },
     { label: "GitHub", href: "https://github.com/pranavkashyap", icon: "⌘" },
     { label: "LinkedIn", href: "https://linkedin.com/in/pranavkashyap", icon: "in" },
     { label: "YouTube", href: "https://youtube.com/@pranavkashyap", icon: "▶" },
@@ -81,12 +82,22 @@ export default function Footer() {
                     {/* Contact */}
                     <div>
                         <h4 style={{ fontWeight: 600, fontSize: "0.95rem", color: "#e2e8f0", marginBottom: "16px" }}>Contact</h4>
+                        <p style={{ color: "#94a3b8", lineHeight: 1.6, marginBottom: "16px", fontSize: "0.95rem" }}>
+                            Have questions or need support? We&apos;re here to help.
+                        </p>
                         <a
-                            href="mailto:hello@launchpad.dev"
-                            className="hover:text-purple-400 transition-colors"
-                            style={{ color: "#a855f7", textDecoration: "none", fontSize: "0.9rem" }}
+                            href="mailto:launchpadaidev@gmail.com"
+                            style={{
+                                display: "inline-flex",
+                                alignItems: "center",
+                                gap: "8px",
+                                color: "#22d3ee",
+                                textDecoration: "none",
+                                fontWeight: 500,
+                                fontSize: "0.95rem"
+                            }}
                         >
-                            hello@launchpad.dev
+                            ✉️ launchpadaidev@gmail.com
                         </a>
                         <div style={{ display: "flex", gap: "12px", marginTop: "20px" }}>
                             {socialLinks.map((s) => (

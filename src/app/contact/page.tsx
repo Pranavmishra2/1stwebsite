@@ -12,7 +12,7 @@ export default function ContactUs() {
             </p>
 
             <div className="glass-card p-8">
-                <form className="flex flex-col gap-6" action="mailto:hello@launchpad.dev" method="POST" encType="text/plain">
+                <form className="flex flex-col gap-6" action="mailto:launchpadaidev@gmail.com" method="POST" encType="text/plain">
                     <div>
                         <label htmlFor="name" className="block text-sm font-medium text-slate-300 mb-2">Name</label>
                         <input
@@ -64,8 +64,8 @@ export default function ContactUs() {
 
                 <div className="mt-12 pt-8 border-t border-slate-800 text-center">
                     <p className="text-slate-400 mb-2">Or email us directly at</p>
-                    <a href="mailto:hello@launchpad.dev" className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-500">
-                        hello@launchpad.dev
+                    <a href="mailto:launchpadaidev@gmail.com" className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-500">
+                        launchpadaidev@gmail.com
                     </a>
                 </div>
             </div>
