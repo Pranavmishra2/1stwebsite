@@ -1,4 +1,5 @@
 "use client";
+import Image from "next/image";
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -46,6 +47,7 @@ export default function Navbar() {
             <div className="container-custom" style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                 {/* Logo */}
                 <Link href="/" style={{ textDecoration: "none", display: "flex", alignItems: "center", gap: "10px", fontSize: "1.25rem", fontWeight: "bold", color: "white", letterSpacing: "-0.025em" }}>
+                    <Image src="/logo.png" alt="LaunchPad" width={32} height={32} style={{ borderRadius: 8, boxShadow: "0 4px 14px 0 rgba(168, 85, 247, 0.39)" }} />
                     Launch<span style={{ color: "#a855f7" }}>Pad</span>
                 </Link>
 

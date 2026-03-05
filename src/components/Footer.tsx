@@ -1,5 +1,6 @@
 "use client";
 import Link from "next/link";
+import Image from "next/image";
 
 const socialLinks = [
     { label: "Twitter", href: "https://twitter.com/pranavkashyap", icon: "𝕏" },
@@ -42,9 +43,13 @@ export default function Footer() {
                                     fontSize: "1.5rem",
                                     fontWeight: 800,
                                     color: "white",
-                                    letterSpacing: "-0.025em"
+                                    letterSpacing: "-0.025em",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    gap: "10px"
                                 }}
                             >
+                                <Image src="/logo.png" alt="LaunchPad" width={40} height={40} style={{ borderRadius: 10, boxShadow: "0 4px 14px 0 rgba(168, 85, 247, 0.39)" }} />
                                 Launch<span style={{ color: "#a855f7" }}>Pad</span>
                             </Link>
 
