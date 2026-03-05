@@ -146,7 +146,13 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
                     const verifyRes = await fetch("/api/razorpay/verify", {
                         method: "POST",
                         headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify(response),
+                        body: JSON.stringify({
+                            ...response,
+                            customerEmail: user?.email,
+                            customerName: user?.name,
+                            productName: product.name,
+                            downloadUrl: product.downloadUrl || `${window.location.origin}/dashboard`
+                        }),
                     });
                     const verifyData = await verifyRes.json();
 
