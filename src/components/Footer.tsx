@@ -139,6 +139,13 @@ export default function Footer() {
                         gap: "12px",
                     }}
                 >
+                    <div style={{ display: "flex", gap: "16px", flexWrap: "wrap", marginBottom: "8px", width: "100%" }}>
+                        <Link href="/privacy-policy" style={{ color: "#64748b", fontSize: "0.85rem", textDecoration: "none" }} className="hover:text-purple-400">Privacy Policy</Link>
+                        <Link href="/terms" style={{ color: "#64748b", fontSize: "0.85rem", textDecoration: "none" }} className="hover:text-purple-400">Terms & Conditions</Link>
+                        <Link href="/disclaimer" style={{ color: "#64748b", fontSize: "0.85rem", textDecoration: "none" }} className="hover:text-purple-400">Disclaimer</Link>
+                        <Link href="/contact" style={{ color: "#64748b", fontSize: "0.85rem", textDecoration: "none" }} className="hover:text-purple-400">Contact Us</Link>
+                    </div>
+
                     <p style={{ color: "#64748b", fontSize: "0.85rem", margin: 0 }}>
                         © {new Date().getFullYear()} LaunchPad. Built for Creators.
                     </p>
