@@ -16,7 +16,7 @@ export async function sendReceiptEmail(
 
     try {
         const data = await resend.emails.send({
-            from: 'Pranav Kashyap <hello@pranavkashyap.com>', // Update this to verified domain when live
+            from: 'Pranav Kashyap <onboarding@resend.dev>', // Resend testing domain
             to: [toEmail],
             subject: `Your Receipt & Download Link: ${productName}`,
             html: `
