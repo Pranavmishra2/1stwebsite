@@ -3,23 +3,23 @@ import { Resend } from 'resend';
 const resend = new Resend(process.env.RESEND_API_KEY || 're_mock_key');
 
 export async function sendReceiptEmail(
-    toEmail: string,
-    customerName: string,
-    productName: string,
-    downloadUrl: string
+  toEmail: string,
+  customerName: string,
+  productName: string,
+  downloadUrl: string
 ) {
-    if (!process.env.RESEND_API_KEY) {
-        console.warn("RESEND_API_KEY is missing. Mocking email send to:", toEmail);
-        console.log(`Email content -> Product: ${productName}, Link: ${downloadUrl}`);
-        return { success: true, mocked: true };
-    }
+  if (!process.env.RESEND_API_KEY) {
+    console.warn("RESEND_API_KEY is missing. Mocking email send to:", toEmail);
+    console.log(`Email content -> Product: ${productName}, Link: ${downloadUrl}`);
+    return { success: true, mocked: true };
+  }
 
-    try {
-        const data = await resend.emails.send({
-            from: 'Pranav Kashyap <onboarding@resend.dev>', // Resend testing domain
-            to: [toEmail],
-            subject: `Your Receipt & Download Link: ${productName}`,
-            html: `
+  try {
+    const data = await resend.emails.send({
+      from: 'LaunchPad <onboarding@resend.dev>', // Resend testing domain
+      to: [toEmail],
+      subject: `Your Receipt & Download Link: ${productName}`,
+      html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333;">
           <div style="background: linear-gradient(135deg, #6366f1, #a855f7); padding: 30px; text-align: center; border-radius: 12px 12px 0 0;">
             <h1 style="color: white; margin: 0;">Thank You for Your Purchase!</h1>
@@ -40,15 +40,15 @@ export async function sendReceiptEmail(
             <hr style="border: none; border-top: 1px solid #e2e8f0; margin: 30px 0;" />
             
             <p style="font-size: 14px; color: #64748b; margin-bottom: 0;">Best regards,</p>
-            <p style="font-size: 16px; font-weight: bold; margin-top: 5px;">Pranav Kashyap</p>
+            <p style="font-size: 16px; font-weight: bold; margin-top: 5px;">LaunchPad Team</p>
           </div>
         </div>
       `,
-        });
+    });
 
-        return { success: true, data };
-    } catch (error) {
-        console.error("Failed to send receipt email:", error);
-        return { success: false, error };
-    }
+    return { success: true, data };
+  } catch (error) {
+    console.error("Failed to send receipt email:", error);
+    return { success: false, error };
+  }
 }

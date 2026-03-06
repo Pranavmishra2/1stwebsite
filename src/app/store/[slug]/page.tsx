@@ -151,7 +151,7 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
                 key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
                 amount: data.amount,
                 currency: data.currency,
-                name: "Pranav Kashyap",
+                name: "LaunchPad",
                 description: product.name,
                 order_id: data.orderId,
                 handler: async (response: RazorpayResponse) => {
@@ -164,7 +164,9 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
                             customerEmail: user?.email,
                             customerName: user?.name,
                             productName: product.name,
-                            downloadUrl: product.downloadUrl || `${window.location.origin}/dashboard`
+                            downloadUrl: product.downloadUrl && product.downloadUrl.startsWith("http")
+                                ? product.downloadUrl
+                                : `${window.location.origin}${product.downloadUrl ? product.downloadUrl : "/dashboard"}`
                         }),
                     });
                     const verifyData = await verifyRes.json();
