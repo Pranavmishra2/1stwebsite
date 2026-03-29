@@ -5,6 +5,7 @@ import { createOrder, updateOrderStatus, getUserOrders } from "@/lib/orderServic
 import { getProductBySlug, Product as DbProduct } from "@/lib/productService";
 import RatingSection from "@/components/RatingSection";
 import { useUser } from "@/context/UserContext";
+import { productSchema, faqSchema } from "@/components/JsonLd";
 
 declare global {
     interface Window {
@@ -35,6 +36,8 @@ interface RazorpayResponse {
     razorpay_order_id: string;
     razorpay_signature: string;
 }
+
+const baseUrl = "https://1stwebsite-sigma.vercel.app";
 
 export default function ProductDetailPage({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = use(params);
@@ -257,6 +260,21 @@ export default function ProductDetailPage({ params }: { params: Promise<{ slug: 
 
     return (
         <>
+            {/* Product JSON-LD */}
+            <script
+                type="application/ld+json"
+                dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema(product, baseUrl)) }}
+            />
+            {/* FAQ JSON-LD */}
+            {product.faqs && product.faqs.length > 0 && (() => {
+                const schema = faqSchema(product.faqs);
+                return schema ? (
+                    <script
+                        type="application/ld+json"
+                        dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+                    />
+                ) : null;
+            })()}
             {/* Breadcrumb */}
             <section style={{ padding: "30px 0 0" }}>
                 <div className="container-custom">

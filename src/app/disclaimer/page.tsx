@@ -1,6 +1,18 @@
-export const metadata = {
+import { Metadata } from "next";
+
+const baseUrl = "https://1stwebsite-sigma.vercel.app";
+
+export const metadata: Metadata = {
     title: "Disclaimer | LaunchPad",
-    description: "Legal and financial disclaimers for LaunchPad.",
+    description: "Legal and financial disclaimers for LaunchPad — important information about our digital products and content.",
+    alternates: { canonical: `${baseUrl}/disclaimer` },
+    openGraph: {
+        title: "Disclaimer | LaunchPad",
+        description: "Legal and financial disclaimers for LaunchPad.",
+        url: `${baseUrl}/disclaimer`,
+        siteName: "LaunchPad",
+        type: "website",
+    },
 };
 
 export default function Disclaimer() {

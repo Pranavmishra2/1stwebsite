@@ -1,6 +1,18 @@
-export const metadata = {
+import { Metadata } from "next";
+
+const baseUrl = "https://1stwebsite-sigma.vercel.app";
+
+export const metadata: Metadata = {
     title: "Terms and Conditions | LaunchPad",
-    description: "Terms and Conditions for using LaunchPad products and services.",
+    description: "Terms and Conditions for using LaunchPad products and services — digital product licenses, refund policy, and user agreements.",
+    alternates: { canonical: `${baseUrl}/terms` },
+    openGraph: {
+        title: "Terms and Conditions | LaunchPad",
+        description: "Terms for using LaunchPad products and services.",
+        url: `${baseUrl}/terms`,
+        siteName: "LaunchPad",
+        type: "website",
+    },
 };
 
 export default function TermsConditions() {

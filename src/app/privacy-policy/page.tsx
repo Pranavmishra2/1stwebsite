@@ -1,6 +1,18 @@
-export const metadata = {
+import { Metadata } from "next";
+
+const baseUrl = "https://1stwebsite-sigma.vercel.app";
+
+export const metadata: Metadata = {
     title: "Privacy Policy | LaunchPad",
-    description: "Privacy Policy for LaunchPad - Learn how we collect, use, and protect your data.",
+    description: "Privacy Policy for LaunchPad — learn how we collect, use, and protect your personal data when you use our digital products and services.",
+    alternates: { canonical: `${baseUrl}/privacy-policy` },
+    openGraph: {
+        title: "Privacy Policy | LaunchPad",
+        description: "Learn how LaunchPad protects your data and privacy.",
+        url: `${baseUrl}/privacy-policy`,
+        siteName: "LaunchPad",
+        type: "website",
+    },
 };
 
 export default function PrivacyPolicy() {
